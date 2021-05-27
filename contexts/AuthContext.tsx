@@ -1,4 +1,4 @@
-import { createContext } from "react";
+import { createContext, ReactNode } from "react";
 
 type SignInCredentials = {
   email: string;
@@ -10,17 +10,21 @@ type AuthContextData = {
   isAuthenticated: boolean;
 };
 
-const AuthContext = createContext({} as AuthContextData)
+type AuthProviderProps = {
+  children: ReactNode;
+}
 
-export function AuthProvider({children}) {
+export const AuthContext = createContext({} as AuthContextData)
+
+export function AuthProvider({children}: AuthProviderProps) {
   const isAuthenticated = false;
 
-  function signIn({ email, password }: SignInCredentials) {
+  async function signIn({ email, password }: SignInCredentials) {
     console.log({email, password})
   }
 
   return (
-    <AuthContext.Provider value={{}}>
+    <AuthContext.Provider value={{ signIn, isAuthenticated }}>
       {children}
     </AuthContext.Provider>
   )
