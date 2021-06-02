@@ -1,6 +1,7 @@
 import axios, { AxiosError } from "axios";
 import { parseCookies, setCookie } from "nookies";
 import { signOut } from "../contexts/AuthContext";
+import { AuthTokenError } from "./errors/AuthTokenError";
 
 
 let isRefreshing = false;
@@ -72,18 +73,20 @@ export function setupAPIClient(ctx = undefined) {
           return new Promise((resolve, reject) => {
             failedRequestsQueue.push({
               onSuccess: (token: string) => {
-                originalConfig.headers["Authorization"] = `Bearer ${token}`;
+                originalConfig.headers["Authorization"] = `Bearer ${token}`
 
-                resolve(api(originalConfig));
+                resolve(api(originalConfig))
               },
               onFailure: (err: AxiosError) => {
-                reject(err);
+                reject(err)
               },
-            });
+            })
           });
         } else {
           if (process.browser) {
-            signOut();
+            signOut()
+          } else {
+            return Promise.reject(new AuthTokenError())
           }
         }
       }
